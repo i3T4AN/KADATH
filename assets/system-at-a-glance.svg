@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 980" role="img" aria-labelledby="title description">
+  <title id="title">KADATH system at a glance</title>
+  <desc id="description">A flow diagram showing goal architecture, isolated execution, grading, evolutionary selection, reproduction, export, and the next epoch loop.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0f1e"/>
+      <stop offset="1" stop-color="#111a30"/>
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#27324a" stroke-width="1" opacity="0.28"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000814" flood-opacity="0.45"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10Z" fill="#7f8da8"/>
+    </marker>
+    <style>
+      .card { fill: #121b2e; stroke-width: 2; filter: url(#shadow); }
+      .eyebrow { font: 700 14px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 2px; }
+      .heading { fill: #f8fafc; font: 700 25px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .body { fill: #aebbd0; font: 500 16px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+      .edge { fill: none; stroke: #7f8da8; stroke-width: 3; marker-end: url(#arrow); }
+      .branch { fill: none; stroke: #7f8da8; stroke-width: 3; }
+      .label { fill: #7f8da8; font: 700 13px ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 1.5px; }
+    </style>
+  </defs>
+
+  <rect x="10" y="10" width="1580" height="960" rx="30" fill="url(#background)" stroke="#26324b" stroke-width="2"/>
+  <rect x="10" y="10" width="1580" height="960" rx="30" fill="url(#grid)"/>
+
+  <text x="60" y="68" fill="#f59e0b" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="800" letter-spacing="3">KADATH</text>
+  <text x="224" y="68" fill="#f8fafc" font-family="ui-sans-serif, system-ui, sans-serif" font-size="30" font-weight="700">SYSTEM AT A GLANCE</text>
+  <text x="60" y="98" fill="#7f8da8" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16">A locked control plane evaluates an evolving population, then feeds the strongest lineage into the next epoch.</text>
+
+  <!-- Initial control-plane pipeline -->
+  <g>
+    <rect class="card" x="60" y="135" width="230" height="105" rx="16" stroke="#3b82f6"/>
+    <text class="eyebrow" x="84" y="167" fill="#60a5fa">INPUT</text>
+    <text class="heading" x="84" y="199">User goal</text>
+    <text class="body" x="84" y="224">and run settings</text>
+
+    <rect class="card" x="330" y="135" width="230" height="105" rx="16" stroke="#3b82f6"/>
+    <text class="eyebrow" x="354" y="167" fill="#60a5fa">SPECIALIST</text>
+    <text class="heading" x="354" y="199">Architect</text>
+    <text class="body" x="354" y="224">designs the benchmark</text>
+
+    <rect class="card" x="600" y="135" width="230" height="105" rx="16" stroke="#3b82f6"/>
+    <text class="eyebrow" x="624" y="167" fill="#60a5fa">CONTROL PLANE</text>
+    <text class="heading" x="624" y="199">Approval</text>
+    <text class="body" x="624" y="224">locks the benchmark</text>
+
+    <rect class="card" x="870" y="135" width="230" height="105" rx="16" stroke="#8b5cf6"/>
+    <text class="eyebrow" x="894" y="167" fill="#a78bfa">POPULATION</text>
+    <text class="heading" x="894" y="199">Genomes</text>
+    <text class="body" x="894" y="224">distinct agent frameworks</text>
+
+    <rect class="card" x="1140" y="135" width="230" height="105" rx="16" stroke="#8b5cf6"/>
+    <text class="eyebrow" x="1164" y="167" fill="#a78bfa">EXECUTION</text>
+    <text class="heading" x="1164" y="199">Parallel epoch</text>
+    <text class="body" x="1164" y="224">isolated attempts</text>
+
+    <path class="edge" d="M290 187H326"/>
+    <path class="edge" d="M560 187H596"/>
+    <path class="edge" d="M830 187H866"/>
+    <path class="edge" d="M1100 187H1136"/>
+  </g>
+
+  <!-- Evidence and grading pipeline -->
+  <g>
+    <rect class="card" x="1140" y="320" width="230" height="105" rx="16" stroke="#06b6d4"/>
+    <text class="eyebrow" x="1164" y="352" fill="#22d3ee">CHECKPOINT</text>
+    <text class="heading" x="1164" y="384">Frozen evidence</text>
+    <text class="body" x="1164" y="409">plus execution traces</text>
+
+    <rect class="card" x="870" y="320" width="230" height="105" rx="16" stroke="#06b6d4"/>
+    <text class="eyebrow" x="894" y="352" fill="#22d3ee">SPECIALIST</text>
+    <text class="heading" x="894" y="384">Model Grader</text>
+    <text class="body" x="894" y="409">extracts supported facts</text>
+
+    <rect class="card" x="600" y="320" width="230" height="105" rx="16" stroke="#f59e0b"/>
+    <text class="eyebrow" x="624" y="352" fill="#fbbf24">CONTROL PLANE</text>
+    <text class="heading" x="624" y="384">Kernel ranking</text>
+    <text class="body" x="624" y="409">scores and selects</text>
+
+    <rect class="card" x="240" y="320" width="260" height="105" rx="16" stroke="#f59e0b"/>
+    <text class="eyebrow" x="264" y="352" fill="#fbbf24">FINAL EPOCH</text>
+    <text class="heading" x="264" y="384">Verified export</text>
+    <text class="body" x="264" y="409">final population + lineage</text>
+
+    <path class="edge" d="M1255 240V316"/>
+    <path class="edge" d="M1140 372H1104"/>
+    <path class="edge" d="M870 372H834"/>
+    <path class="edge" d="M600 372H504"/>
+    <text class="label" x="520" y="358">STOP</text>
+  </g>
+
+  <!-- Selection branches -->
+  <g>
+    <path class="branch" d="M715 425V500M320 500H1120M320 500V545M715 500V545M1120 500V545"/>
+    <text class="label" x="735" y="482">CONTINUE</text>
+
+    <rect class="card" x="170" y="550" width="300" height="115" rx="18" stroke="#22c55e"/>
+    <text class="eyebrow" x="196" y="585" fill="#4ade80">TOP COHORT</text>
+    <text class="heading" x="196" y="619">Preserved unchanged</text>
+    <text class="body" x="196" y="646">elite lineage survives intact</text>
+
+    <rect class="card" x="565" y="550" width="300" height="115" rx="18" stroke="#f59e0b"/>
+    <text class="eyebrow" x="591" y="585" fill="#fbbf24">MIDDLE COHORT</text>
+    <text class="heading" x="591" y="619">Self-reflection</text>
+    <text class="body" x="591" y="646">independent mutation decision</text>
+
+    <rect class="card" x="970" y="550" width="300" height="115" rx="18" stroke="#ef4444"/>
+    <text class="eyebrow" x="996" y="585" fill="#f87171">CULLED COHORT</text>
+    <text class="heading" x="996" y="619">Archived</text>
+    <text class="body" x="996" y="646">replaced by descendants</text>
+  </g>
+
+  <!-- Learning, reproduction, and next generation -->
+  <g>
+    <rect class="card" x="170" y="735" width="300" height="110" rx="18" stroke="#22c55e"/>
+    <text class="eyebrow" x="196" y="770" fill="#4ade80">SPECIALIST</text>
+    <text class="heading" x="196" y="804">Tweaker</text>
+    <text class="body" x="196" y="830">studies the full population</text>
+
+    <rect class="card" x="970" y="735" width="300" height="110" rx="18" stroke="#8b5cf6"/>
+    <text class="eyebrow" x="996" y="770" fill="#a78bfa">SPECIALIST</text>
+    <text class="heading" x="996" y="804">Birther</text>
+    <text class="body" x="996" y="830">creates elite descendants</text>
+
+    <rect x="555" y="850" width="320" height="90" rx="20" fill="#172554" stroke="#60a5fa" stroke-width="3" filter="url(#shadow)"/>
+    <text class="eyebrow" x="585" y="884" fill="#93c5fd">NEXT GENERATION</text>
+    <text class="heading" x="585" y="918">Next population</text>
+
+    <path class="edge" d="M320 665V731"/>
+    <path class="edge" d="M1120 665V731"/>
+    <path class="edge" d="M470 790H966"/>
+    <path class="edge" d="M170 607H110V895H551"/>
+    <path class="edge" d="M715 665V846"/>
+    <path class="edge" d="M1120 845V895H879"/>
+
+    <path class="edge" d="M875 895H1490V187H1374"/>
+    <text class="label" x="1396" y="878">NEXT EPOCH</text>
+  </g>
+</svg>

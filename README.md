@@ -10,27 +10,7 @@ Made by **i3t4an**. Credit to **Hugging Face** for `smolagents`.
 
 ## The system at a glance
 
-```mermaid
-flowchart TD
-    U[User goal and run settings] --> A[Architect]
-    A --> B[Benchmark approval screen]
-    B -->|Approved| G1[Distinct generation-one genomes]
-    G1 --> E[Parallel isolated epoch]
-    E --> F[Freeze evidence and execution traces]
-    F --> G[Model Grader extracts supported facts]
-    G --> K[Kernel calculates scores and ranking]
-    K -->|Final epoch| X[Final population and export]
-    K -->|Top cohort| T[Preserved unchanged]
-    K -->|Middle cohort| M[Independent self-reflection and mutation]
-    K -->|Culled cohort| C[Archived]
-    T --> TW[Tweaker studies the full population]
-    TW --> BI[Birther creates elite descendants]
-    C --> BI
-    T --> N[Next population]
-    M --> N
-    BI --> N
-    N --> E
-```
+![KADATH system architecture and evolutionary loop](assets/system-at-a-glance.svg)
 
 There are two distinct layers:
 
