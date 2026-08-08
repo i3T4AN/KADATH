@@ -1,0 +1,10 @@
+.kadath/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.venv/
+.env
+/seed/smolagents/.git/

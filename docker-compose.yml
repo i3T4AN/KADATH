@@ -1,0 +1,144 @@
+services:
+  control:
+    build: .
+    profiles: ["control"]
+    environment:
+      KADATH_DATABASE_URL: postgresql://kadath:${KADATH_POSTGRES_PASSWORD}@postgres:5432/kadath
+      KADATH_SEED_DIR: /app/seed/smolagents
+      KADATH_SEARXNG_URL: http://searxng:8080
+      KADATH_LITELLM_URL: http://litellm:4000
+      KADATH_MODEL: kadath-default
+      KADATH_UPSTREAM_MODEL: ${KADATH_UPSTREAM_MODEL:?set KADATH_UPSTREAM_MODEL}
+      KADATH_MODEL_GLOBAL_CONCURRENCY: ${KADATH_MODEL_GLOBAL_CONCURRENCY:-64}
+      KADATH_GRADER_CHUNK_TOKENS: ${KADATH_GRADER_CHUNK_TOKENS:-12000}
+      KADATH_WORKER_GLOBAL_LIMIT: ${KADATH_WORKER_GLOBAL_LIMIT:-500}
+      LITELLM_API_BASE: http://litellm:4000
+      LITELLM_API_KEY: ${LITELLM_MASTER_KEY:?set LITELLM_MASTER_KEY}
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:?set LITELLM_MASTER_KEY}
+      KADATH_PLAYWRIGHT_MCP_URL: http://playwright-mcp:8931/mcp
+      KADATH_BROWSER_IMAGE: mcr.microsoft.com/playwright/mcp:latest
+      KADATH_BROWSER_FLEET: ${KADATH_BROWSER_FLEET:-1}
+      KADATH_GRADER_CONNECTOR_LEDGER_URL: ${KADATH_GRADER_CONNECTOR_LEDGER_URL:-}
+      KADATH_GRADER_CONNECTOR_LEDGER_TOKEN: ${KADATH_GRADER_CONNECTOR_LEDGER_TOKEN:-}
+      KADATH_IN_CONTAINER: "1"
+      KADATH_CONTAINER_RUN_ROOT: /app/.kadath/runs
+      KADATH_HOST_RUN_ROOT: ${PWD}/.kadath/runs
+      KADATH_OBJECT_STORE_ENDPOINT: http://minio:9000
+      KADATH_S3_ENDPOINT: http://minio:9000
+      KADATH_S3_BUCKET: kadath
+      AWS_ACCESS_KEY_ID: ${KADATH_MINIO_USER:?set KADATH_MINIO_USER}
+      AWS_SECRET_ACCESS_KEY: ${KADATH_MINIO_PASSWORD:?set KADATH_MINIO_PASSWORD}
+    volumes:
+      - ./.kadath:/app/.kadath
+      # Only the kernel control container receives Docker access. Organism and
+      # worker containers never receive this mount.
+      - ${KADATH_DOCKER_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      litellm:
+        condition: service_healthy
+    networks: [control-plane, agent]
+
+  organism-worker:
+    image: kadath-organism:latest
+    build:
+      context: .
+      dockerfile: worker.Dockerfile
+    profiles: ["worker"]
+    environment:
+      KADATH_MODEL: kadath-default
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks: [agent]
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: kadath
+      POSTGRES_USER: kadath
+      POSTGRES_PASSWORD: ${KADATH_POSTGRES_PASSWORD:?set KADATH_POSTGRES_PASSWORD}
+    volumes:
+      - kadath-postgres:/var/lib/postgresql/data
+      - ./deploy/postgres/init.sql:/docker-entrypoint-initdb.d/001-kadath.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kadath -d kadath"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [control-plane]
+
+  searxng:
+    image: searxng/searxng:latest
+    environment:
+      BASE_URL: http://localhost:8080/
+      SEARXNG_SECRET_KEY: ${SEARXNG_SECRET_KEY:?set SEARXNG_SECRET_KEY}
+    volumes:
+      - ./deploy/searxng:/etc/searxng:ro
+    networks: [agent]
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${KADATH_MINIO_USER:?set KADATH_MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${KADATH_MINIO_PASSWORD:?set KADATH_MINIO_PASSWORD}
+    volumes:
+      - kadath-minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    networks: [control-plane]
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        python -c 'import os,pathlib;
+        source=pathlib.Path("/app/config.template.yaml").read_text();
+        pathlib.Path("/tmp/kadath-litellm.yaml").write_text(source.replace("__KADATH_UPSTREAM_MODEL__", os.environ["KADATH_UPSTREAM_MODEL"]))'
+        && exec litellm --config /tmp/kadath-litellm.yaml --port 4000
+    environment:
+      LITELLM_MASTER_KEY: ${LITELLM_MASTER_KEY:?set LITELLM_MASTER_KEY}
+      KADATH_UPSTREAM_MODEL: ${KADATH_UPSTREAM_MODEL:?set KADATH_UPSTREAM_MODEL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    volumes:
+      - ./deploy/litellm/config.yaml:/app/config.template.yaml:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness', timeout=5)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks: [control-plane, provider-egress]
+
+  playwright-mcp:
+    image: mcr.microsoft.com/playwright/mcp:latest
+    entrypoint: ["node", "/app/cli.js"]
+    command: ["--headless", "--browser", "chromium", "--no-sandbox", "--isolated", "--allowed-hosts=playwright-mcp,control,organism-worker", "--output-dir", "/artifacts", "--output-max-size", "1073741824", "--save-session", "--port", "8931", "--host", "0.0.0.0"]
+    profiles: ["browser"]
+    init: true
+    shm_size: 1gb
+    volumes:
+      - ./.kadath/browser-artifacts:/artifacts
+    networks: [agent]
+
+volumes:
+  kadath-postgres:
+  kadath-minio:
+
+networks:
+  control-plane:
+    internal: true
+  agent:
+    name: kadath-agent
+  provider-egress:

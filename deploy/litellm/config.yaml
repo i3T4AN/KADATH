@@ -1,0 +1,7 @@
+model_list:
+  - model_name: kadath-default
+    litellm_params:
+      model: openai/__KADATH_UPSTREAM_MODEL__
+      api_key: os.environ/OPENAI_API_KEY
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY
