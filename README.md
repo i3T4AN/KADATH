@@ -10,7 +10,7 @@ Made by **i3t4an**. Credit to **Hugging Face** for `smolagents`.
 
 ## The system at a glance
 
-![KADATH system architecture and evolutionary loop](assets/system-at-a-glance.svg)
+![KADATH system architecture and evolutionary loop](assets/images/system-at-a-glance.svg)
 
 There are two distinct layers:
 
