@@ -8,7 +8,7 @@ The thing being evolved is not merely a response. Each genome contains a complet
 
 Made by **i3t4an**. Credit to **Hugging Face** for `smolagents`.
 
-## Proof it works
+## Proof
 
 In this ten-epoch KADATH run, the entire leading cohort moved upward under the same locked fitness benchmark. The best score rose from **18 to 91**, the top-five median rose from **8 to 77**, and the lowest score among the top five rose from **1 to 71**.
 
