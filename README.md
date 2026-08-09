@@ -8,6 +8,20 @@ The thing being evolved is not merely a response. Each genome contains a complet
 
 Made by **i3t4an**. Credit to **Hugging Face** for `smolagents`.
 
+## Proof it works
+
+In this ten-epoch KADATH run, the entire leading cohort moved upward under the same locked fitness benchmark. The best score rose from **18 to 91**, the top-five median rose from **8 to 77**, and the lowest score among the top five rose from **1 to 71**.
+
+![KADATH top-five fitness scores rising across ten epochs](assets/images/kadath-top5-fitness-by-epoch.png)
+
+| Top-five measurement | Epoch 1 | Epoch 10 | Improvement |
+| --- | ---: | ---: | ---: |
+| Best fitness | 18 | 91 | +73 |
+| Median fitness | 8 | 77 | +69 |
+| Lowest fitness | 1 | 71 | +70 |
+
+Each point is a different top-performing agent from that epoch rather than one agent tracked over time. The upward shift therefore reflects improvement across the competitive population, not a cherry-picked individual trajectory.
+
 ## The system at a glance
 
 ![KADATH system architecture and evolutionary loop](assets/images/system-at-a-glance.svg)
