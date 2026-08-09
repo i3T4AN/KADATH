@@ -8,6 +8,15 @@ The thing being evolved is not merely a response. Each genome contains a complet
 
 Made by **i3t4an**. Credit to **Hugging Face** for `smolagents`.
 
+## The system at a glance
+
+![KADATH system architecture and evolutionary loop](assets/images/system-at-a-glance.svg)
+
+There are two distinct layers:
+
+- The **kernel** owns the run, benchmark, deadlines, containers, evidence, grading formulas, population selection, database, Git lineage, recovery, exports, and cleanup. It does not evolve.
+- The **organisms** perform the goal. Their complete framework is evolvable, but their repository is read-only while an epoch is running. They can change only during the post-grade mutation phase.
+
 ## Proof
 
 In this ten-epoch KADATH run, the entire leading cohort moved upward under the same locked fitness benchmark. The best score rose from **18 to 91**, the top-five median rose from **8 to 77**, and the lowest score among the top five rose from **1 to 71**.
@@ -21,15 +30,6 @@ In this ten-epoch KADATH run, the entire leading cohort moved upward under the s
 | Lowest fitness | 1 | 71 | +70 |
 
 Each point is a different top-performing agent from that epoch rather than one agent tracked over time. The upward shift therefore reflects improvement across the competitive population, not a cherry-picked individual trajectory.
-
-## The system at a glance
-
-![KADATH system architecture and evolutionary loop](assets/images/system-at-a-glance.svg)
-
-There are two distinct layers:
-
-- The **kernel** owns the run, benchmark, deadlines, containers, evidence, grading formulas, population selection, database, Git lineage, recovery, exports, and cleanup. It does not evolve.
-- The **organisms** perform the goal. Their complete framework is evolvable, but their repository is read-only while an epoch is running. They can change only during the post-grade mutation phase.
 
 ## What happens when a run starts
 
