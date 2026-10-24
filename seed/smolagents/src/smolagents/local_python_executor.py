@@ -841,9 +841,11 @@ def evaluate_call(
     elif isinstance(call.func, ast.Attribute):
         obj = evaluate_ast(call.func.value, state, static_tools, custom_tools, authorized_imports)
         func_name = call.func.attr
+        if isinstance(obj, str) and func_name in {"format", "format_map"}:
+            raise InterpreterError(f"Forbidden string formatting method: {func_name}")
         if not hasattr(obj, func_name):
             raise InterpreterError(f"Object {obj} has no attribute {func_name}")
-        func = getattr(obj, func_name)
+        func = nodunder_getattr(obj, func_name)
     elif isinstance(call.func, ast.Name):
         func_name = call.func.id
         if func_name in state:
