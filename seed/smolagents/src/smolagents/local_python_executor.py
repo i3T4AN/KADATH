@@ -59,6 +59,7 @@ MAX_OPERATIONS = 10000000
 MAX_WHILE_ITERATIONS = 1000000
 MAX_EXECUTION_TIME_SECONDS = 30
 ALLOWED_DUNDER_METHODS = ["__init__", "__str__", "__repr__"]
+FORBIDDEN_STRING_FORMAT_METHODS = {"format", "format_map"}
 
 
 def custom_print(*args):
@@ -68,6 +69,10 @@ def custom_print(*args):
 def nodunder_getattr(obj, name, default=None):
     if name.startswith("__") and name.endswith("__"):
         raise InterpreterError(f"Forbidden access to dunder attribute: {name}")
+    if name in FORBIDDEN_STRING_FORMAT_METHODS and (
+        isinstance(obj, str) or (isinstance(obj, type) and issubclass(obj, str))
+    ):
+        raise InterpreterError(f"Forbidden string formatting method: {name}")
     return getattr(obj, name, default)
 
 
@@ -387,10 +392,8 @@ def evaluate_attribute(
     custom_tools: dict[str, Callable],
     authorized_imports: list[str],
 ) -> Any:
-    if expression.attr.startswith("__") and expression.attr.endswith("__"):
-        raise InterpreterError(f"Forbidden access to dunder attribute: {expression.attr}")
     value = evaluate_ast(expression.value, state, static_tools, custom_tools, authorized_imports)
-    return getattr(value, expression.attr)
+    return nodunder_getattr(value, expression.attr)
 
 
 def evaluate_unaryop(
@@ -841,8 +844,6 @@ def evaluate_call(
     elif isinstance(call.func, ast.Attribute):
         obj = evaluate_ast(call.func.value, state, static_tools, custom_tools, authorized_imports)
         func_name = call.func.attr
-        if isinstance(obj, str) and func_name in {"format", "format_map"}:
-            raise InterpreterError(f"Forbidden string formatting method: {func_name}")
         if not hasattr(obj, func_name):
             raise InterpreterError(f"Object {obj} has no attribute {func_name}")
         func = nodunder_getattr(obj, func_name)
